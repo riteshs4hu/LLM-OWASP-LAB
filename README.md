@@ -1,5 +1,8 @@
 # OWASP LLM Top 10 Labs
 
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/862f5a0d-047b-4262-a50c-793cfd565c13" />
+
+
 A collection of intentionally vulnerable AI/LLM applications for learning LLM security through hands-on labs.
 
 The goal of this project is to cover the vulnerabilities from the OWASP Top 10 for LLM Applications with practical challenges that you can run locally and test yourself.
