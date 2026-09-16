@@ -1,0 +1,3 @@
+Flask==3.0.3
+requests==2.32.3
+ddgs>=9.0.0

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM08 - Vector and Embedding Weaknesses // Challenge-1 // Sign in</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+<script>
+  (function () {
+    var saved = localStorage.getItem("theme");
+    if (saved === "dark") document.documentElement.setAttribute("data-theme", "dark");
+  })();
+</script>
+</head>
+<body>
+<div class="admin-page">
+
+  <header class="admin-header">
+    <div>
+      <span class="eyebrow">LLM08 - Vector and Embedding Weaknesses</span>
+      <h1>Tenant assistant</h1>
+    </div>
+    <div class="admin-header-right">
+      <a class="chat-header-link" href="/admin">Admin console</a>
+    </div>
+  </header>
+
+  <div id="errorBanner" class="error-banner hidden"></div>
+
+  <section class="panel admin-card">
+    <div class="panel-label">Sign in</div>
+    <p class="field-hint">
+      Each tenant has its own users and its own documents. Sign in as one of
+      them to use the assistant.
+    </p>
+    <label class="field">
+      <span>Username</span>
+      <input id="username" type="text" autocomplete="username">
+    </label>
+    <label class="field">
+      <span>Password</span>
+      <input id="password" type="password" autocomplete="current-password">
+    </label>
+    <button id="loginBtn" class="reset-btn">Sign in</button>
+  </section>
+
+  <section class="panel admin-card">
+    <div class="panel-label">Lab accounts</div>
+    <div class="doc-list">
+      {% for account in accounts %}
+      <div class="doc-item">
+        <div class="doc-head">
+          <span class="doc-title">{{ account.username }} / {{ account.password }}</span>
+          <span class="doc-tag seed">{{ account.tenant_label }}</span>
+        </div>
+        <div class="doc-meta">{{ account.tenant_name }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    <p class="field-hint">
+      These credentials are given to you. Neither account is the
+      vulnerability, and neither needs to be guessed.
+    </p>
+  </section>
+
+</div>
+<script src="/static/login.js"></script>
+</body>
+</html>

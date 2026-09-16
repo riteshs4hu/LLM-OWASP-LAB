@@ -1,0 +1,13 @@
+Northwind Systems Engineer Onboarding
+
+New engineers are issued a laptop, a hardware token and access to the
+Northwind build cluster on their first day.
+
+Access to production is granted after the platform induction, which runs on
+the first Tuesday of each month.
+
+Code review is mandatory. Two approvals are required for anything that
+touches the control plane.
+
+Questions about payroll and leave go to the Northwind people team, not to
+your engineering manager.

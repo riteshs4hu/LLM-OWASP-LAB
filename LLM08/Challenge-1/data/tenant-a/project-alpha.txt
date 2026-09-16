@@ -1,0 +1,14 @@
+Project Alpha Internal Information
+
+Internal project code: ALPHA-7429
+Project status: Confidential
+
+Project Alpha is Northwind Systems' next-generation control platform. The
+programme is not announced externally and must not be discussed with
+customers, partners or candidates.
+
+Target hardware launch is Q3. The pilot customer is under NDA and is referred
+to in all written material as "the northern operator".
+
+Budget approval sits with the Northwind executive board. Escalations go to
+the programme lead, not to the customer account team.

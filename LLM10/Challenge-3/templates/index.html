@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM10 - Unbounded Consumption // Challenge-3 // DeepDive Research Agent</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.1.5/purify.min.js"></script>
+<script>
+  (function () {
+    var saved = localStorage.getItem("theme");
+    if (saved === "dark") document.documentElement.setAttribute("data-theme", "dark");
+  })();
+</script>
+</head>
+<body data-storage-key="llm10c3" data-max-len="2000">
+<div class="app">
+
+  <aside class="sidebar">
+
+    <div class="sidebar-scroll">
+
+      <header class="brand-block">
+        <span class="eyebrow">LLM10 - Unbounded Consumption</span>
+        <h1>Challenge-3</h1>
+      </header>
+
+      <section class="panel">
+        <div class="panel-label">Objective</div>
+        <p class="brief">
+          A research agent with two tools and an agent loop written as
+          <code>while True</code> - no iteration cap, no time budget, no
+          repeat detection. Both tools answer in a way that invites the next
+          call. Get a single turn past
+          <strong>{{ solve_iterations }} tool iterations</strong> and watch
+          the meter run away.
+        </p>
+
+        <ul class="tool-list">
+          <li><code>search_web(query)</code> - returns result snippets</li>
+          <li><code>summarize(text)</code> - condenses text into a summary</li>
+        </ul>
+
+        <div class="status-row">
+          <div class="status-box" id="statusBox">
+            <span class="dot pending"></span>
+            <span class="status-text-wrap">Status <strong id="statusText">Not solved</strong></span>
+          </div>
+          <div class="status-box">Peak iterations in a turn <strong id="peakIterations">0</strong></div>
+          <div class="status-box">Tool calls this session <strong id="attemptCount">0</strong></div>
+        </div>
+
+        <div id="solvedBox" class="solved-box hidden">
+          <span class="solved-label">Challenge solved</span>
+          <p class="solved-reason">Because <span id="solvedReason"></span></p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-label">Resource meter</div>
+
+        <div class="meter-rows">
+          <div class="meter-row">
+            <span class="meter-key">Iterations this turn</span>
+            <span class="meter-val" id="mIter">0</span>
+          </div>
+          <div class="meter-row">
+            <span class="meter-key">search_web calls</span>
+            <span class="meter-val" id="mSearch">0</span>
+          </div>
+          <div class="meter-row">
+            <span class="meter-key">summarize calls</span>
+            <span class="meter-val" id="mSummarize">0</span>
+          </div>
+          <div class="meter-row">
+            <span class="meter-key">Repeated queries</span>
+            <span class="meter-val" id="mRepeat">0</span>
+          </div>
+          <div class="meter-row">
+            <span class="meter-key">Elapsed seconds</span>
+            <span class="meter-val" id="mElapsed">0.0</span>
+          </div>
+          <div class="meter-row">
+            <span class="meter-key">Tool calls this session</span>
+            <span class="meter-val" id="mCumulative">0</span>
+          </div>
+        </div>
+
+        <div class="meter-bar"><div class="meter-bar-fill" id="meterFill"></div></div>
+        <div class="meter-cap" id="meterCap">
+          <span>Iterations vs budget</span>
+          <strong id="meterCapVal">0 / {{ solve_iterations }}</strong>
+        </div>
+
+        <p class="meter-note" id="mPattern">No repeating pattern detected yet.</p>
+        <p class="meter-note">
+          The application measures every one of these numbers and enforces
+          none of them. A lab backstop stops the loop at
+          {{ backstop_iterations }} iterations or {{ backstop_seconds }}
+          seconds so the demo stays usable - that is a guardrail, not the fix.
+        </p>
+      </section>
+
+      <section class="panel">
+        <div class="panel-label">Session</div>
+        <label class="field">
+          <span>Model</span>
+          <input id="model" type="text" placeholder="{{ default_model }}">
+        </label>
+        <label class="field">
+          <span>Ollama host</span>
+          <input id="ollamaHost" type="text" value="{{ ollama_host }}" disabled>
+        </label>
+        <p class="field-hint" style="margin-bottom:10px;">
+          Needs a tool-calling-capable model, e.g. <code>llama3.1</code>,
+          <code>qwen2.5</code> or <code>mistral-nemo</code>.
+        </p>
+        <button id="resetBtn" class="reset-btn">Reset session</button>
+      </section>
+
+    </div>
+
+    <a class="sidebar-author" href="https://github.com/riteshs4hu/" target="_blank" rel="noopener noreferrer">
+      <svg class="gh-icon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true">
+        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38
+          0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13
+          -.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66
+          .07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15
+          -.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0
+          1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82
+          1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48
+          0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/>
+      </svg>
+      <span>github.com/riteshs4hu</span>
+    </a>
+
+  </aside>
+
+  <main class="chat-panel">
+
+    <div class="chat-header">
+      <span class="chat-header-title">Challenge-3</span>
+      <div class="chat-header-right">
+        <span id="connStatus" class="conn-status"></span>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="errorBanner" class="error-banner hidden"></div>
+
+    <div id="chatScroll" class="chat-scroll">
+      <div id="termWindow" class="chat-thread">
+        <div class="empty-state" id="emptyState">
+          <h2>DeepDive Research Agent</h2>
+          <p>Ask it to research something open-ended - "research the regional logistics market" - and watch each iteration stream in while the meter climbs.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-dock">
+      <div class="input-shell">
+        <textarea id="userInput" placeholder="e.g. Research the regional logistics market" rows="1"></textarea>
+        <button id="sendBtn" aria-label="Send message">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+        </button>
+      </div>
+      <div class="input-meta">
+        <button id="stopBtn" class="stop-btn hidden" type="button">Stop stream</button>
+        <span id="charCount">0 / 2000</span>
+      </div>
+    </div>
+
+  </main>
+
+</div>
+<script src="/static/script.js"></script>
+</body>
+</html>

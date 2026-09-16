@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LLM04 - Data and Model Poisoning // Challenge-1 // Admin console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+<script>
+  (function () {
+    var saved = localStorage.getItem("theme");
+    if (saved === "dark") document.documentElement.setAttribute("data-theme", "dark");
+  })();
+</script>
+</head>
+<body data-signed-in="{{ 'yes' if signed_in else 'no' }}">
+<div class="admin-page">
+
+  <header class="admin-header">
+    <div>
+      <span class="eyebrow">LLM04 - Data and Model Poisoning</span>
+      <h1>Knowledge base administration</h1>
+    </div>
+    <div class="admin-header-right">
+      <a class="chat-header-link" href="/">Back to chatbot</a>
+      <button id="logoutBtn" class="reset-btn hidden">Sign out</button>
+    </div>
+  </header>
+
+  <div id="errorBanner" class="error-banner hidden"></div>
+  <div id="noticeBanner" class="notice-banner hidden"></div>
+
+  <section class="panel admin-card" id="loginCard">
+    <div class="panel-label">Sign in</div>
+    <p class="field-hint">
+      Administrator access is required to manage documents and rebuild the
+      retrieval index.
+    </p>
+    <label class="field">
+      <span>Username</span>
+      <input id="username" type="text" autocomplete="username">
+    </label>
+    <label class="field">
+      <span>Password</span>
+      <input id="password" type="password" autocomplete="current-password">
+    </label>
+    <button id="loginBtn" class="reset-btn">Sign in</button>
+  </section>
+
+  <div id="adminBody" class="hidden">
+
+    <section class="panel admin-card">
+      <div class="panel-label">Retrieval index</div>
+      <div class="meter">
+        <div class="meter-row"><span>Documents stored</span><strong id="mDocuments">0</strong></div>
+        <div class="meter-row"><span>Documents in the index</span><strong id="mIndexedDocs">0</strong></div>
+        <div class="meter-row"><span>Chunks</span><strong id="mChunks">0</strong></div>
+        <div class="meter-row"><span>Embeddings</span><strong id="mBackend">-</strong></div>
+        <div class="meter-row"><span>Rebuilds</span><strong id="mReindexes">0</strong></div>
+      </div>
+      <p class="meter-note hidden" id="indexNote"></p>
+      <div class="admin-actions">
+        <button id="reindexBtn" class="reset-btn">Update RAG</button>
+        <span id="dirtyFlag" class="admin-flag hidden">Documents changed since the last rebuild</span>
+      </div>
+    </section>
+
+    <section class="panel admin-card">
+      <div class="panel-label">Upload a document</div>
+      <p class="field-hint">
+        Accepted types: <code>.txt</code> and <code>.pdf</code>, up to
+        {{ max_upload_mb }} MB. An uploaded document does not affect answers
+        until the index is rebuilt.
+      </p>
+      <input id="fileInput" type="file" accept=".txt,.pdf" class="admin-file">
+      <label class="checkbox-field">
+        <input id="keepBoth" type="checkbox">
+        <span>Keep both copies. Without this, uploading a file whose name
+        already exists replaces that document.</span>
+      </label>
+      <button id="uploadBtn" class="reset-btn">Upload</button>
+    </section>
+
+    <section class="panel admin-card">
+      <div class="panel-label">Documents</div>
+      <div id="docList" class="doc-list">
+        <p class="ledger-empty">Loading...</p>
+      </div>
+    </section>
+
+  </div>
+
+</div>
+<script src="/static/admin.js"></script>
+</body>
+</html>
